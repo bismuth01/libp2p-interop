@@ -25,7 +25,8 @@ logging.getLogger("libp2p").setLevel(logging.WARNING)
 
 PING_PROTOCOL_ID = TProtocol("/ipfs/ping/1.0.0")
 PING_LENGTH = 32
-RESP_TIMEOUT = 60
+PING_INTERVAL = 1
+RESP_TIMEOUT = 5
 
 
 async def handle_ping(stream: INetStream) -> None:
@@ -45,20 +46,24 @@ async def handle_ping(stream: INetStream) -> None:
 
 
 async def send_ping(stream: INetStream) -> None:
-    try:
-        payload = b"\x01" * PING_LENGTH
-        print(f"sending ping to {stream.muxed_conn.peer_id}")
+    while True:
+        try:
+            payload = b"\x01" * PING_LENGTH
+            print(f"sending ping to {stream.muxed_conn.peer_id}")
 
-        await stream.write(payload)
+            await stream.write(payload)
 
-        with trio.fail_after(RESP_TIMEOUT):
-            response = await stream.read(PING_LENGTH)
+            with trio.fail_after(RESP_TIMEOUT):
+                response = await stream.read(PING_LENGTH)
 
-        if response == payload:
-            print(f"received pong from {stream.muxed_conn.peer_id}")
+            if response == payload:
+                print(f"received pong from {stream.muxed_conn.peer_id}")
 
-    except Exception as e:
-        print(f"error occurred : {e}")
+            await trio.sleep(PING_INTERVAL)
+
+        except Exception as e:
+            print(f"error occurred : {e}")
+            break
 
 
 async def run(port: int, destination: str, seed: int | None = None) -> None:
@@ -74,7 +79,7 @@ async def run(port: int, destination: str, seed: int | None = None) -> None:
     tcp_addrs = get_available_interfaces(port)
     quic_addrs = []
     for addr in tcp_addrs:
-        addr_str = str(addr).replace("/tcp/", "/udp/") + "/quic"
+        addr_str = str(addr).replace("/tcp/", "/udp/") + "/quic-v1"
         quic_addrs.append(Multiaddr(addr_str))
 
     if seed:
@@ -106,7 +111,7 @@ async def run(port: int, destination: str, seed: int | None = None) -> None:
 
             # Use optimal address for the client command
             optimal_tcp = get_optimal_binding_address(port)
-            optimal_quic_str = str(optimal_tcp).replace("/tcp/", "/udp/") + "/quic"
+            optimal_quic_str = str(optimal_tcp).replace("/tcp/", "/udp/") + "/quic-v1"
             peer_id = host.get_id().to_string()
             optimal_quic_with_peer = f"{optimal_quic_str}/p2p/{peer_id}"
             print(
@@ -137,7 +142,7 @@ def main() -> None:
     """
 
     example_maddr = (
-        "/ip4/[HOST IP]/udp/40675/quic/p2p/16Uiu2HAmFPCLrYapfSbRv7uVLxhp3qkb2oLz16hJLZwV9wotM8aU"
+        "/ip4/[HOST IP]/udp/40675/quic-v1/p2p/16Uiu2HAmFPCLrYapfSbRv7uVLxhp3qkb2oLz16hJLZwV9wotM8aU"
     )
 
     parser = argparse.ArgumentParser(description=description)
