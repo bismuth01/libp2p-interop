@@ -2,6 +2,23 @@
 
 This repository contains examples of interop for all libp2p implementations.
 
+## State of protocols
+
+✅ -> Tested and works
+❌ -> Testing fails
+🛠️ -> Under development
+🚧 -> Development hasn't started
+
+### Ping
+
+|   FROM\TO  | leanp2p | py-libp2p | zig-libp2p | go-libp2p | js-libp2p |
+|:----------:|:-------:|:---------:|:----------:|:---------:|:---------:|
+| leanp2p    |    ✅    |     ❌     |      🚧     |     🚧     |     🚧     |
+| py-libp2p  |    🛠️    |     ✅     |      🚧     |     🚧     |     🚧     |
+| zig-libp2p |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |
+| go-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |
+| js-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |
+
 ## Setting up different libp2p implementations
 
 For [leanp2p](https://github.com/qdrvm/leanp2p): https://github.com/qdrvm/leanp2p/blob/main/README.md
