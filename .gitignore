@@ -1,1 +1,6 @@
+# For leanp2p
 build/
+
+# For pylibp2p
+.venv
+__pycache__
