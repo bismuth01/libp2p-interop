@@ -21,6 +21,7 @@ This repository contains examples of interop for all libp2p implementations.
 | zig-libp2p |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
 | go-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
 | js-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
+| rust-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
 
 ## Setting up different libp2p implementations
 
