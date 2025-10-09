@@ -5,8 +5,11 @@ This repository contains examples of interop for all libp2p implementations.
 ## State of protocols
 
 ✅ -> Tested and works
+
 ❌ -> Testing fails
+
 🛠️ -> Under development
+
 🚧 -> Development hasn't started
 
 ### Ping
