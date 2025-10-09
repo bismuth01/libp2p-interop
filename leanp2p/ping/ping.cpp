@@ -6,6 +6,7 @@
 #include <libp2p/coro/spawn.hpp>
 #include <libp2p/crypto/random_generator.hpp>
 #include <random>
+#include <iostream>
 
 int main(int argc, char** argv) {
     libp2p::simpleLoggingSystem();
@@ -34,7 +35,16 @@ int main(int argc, char** argv) {
     auto random = injector.create<std::shared_ptr<libp2p::crypto::random::CSPRNG>>();
 
     libp2p::protocol::PingConfig ping_config{};
+    // Set ping interval to 1 second and timeout to 5 seconds
+    ping_config.interval = std::chrono::seconds(1);
+    ping_config.timeout = std::chrono::seconds(5);
     auto ping = std::make_shared<libp2p::protocol::Ping>(io_context, host, random, ping_config);
+
+    if (not host->listen(sample_peer.listen)) {
+        std::println("Error listening on {}", sample_peer.listen);
+        return 1;
+    }
+
     host->start();
     ping->start();
 
@@ -51,6 +61,11 @@ int main(int argc, char** argv) {
             }
         });
     }
+
+    auto ping_handler = [log](const libp2p::peer::PeerInfo& peer_info) {
+        log->info("Ping successful to peer: {}", peer_info.id.toBase58());
+    };
+    host->setOnNewConnectionHandler(ping_handler);
 
     log->info("Ping client started");
     boost::asio::signal_set signals(*io_context, SIGINT, SIGTERM);
