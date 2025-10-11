@@ -21,3 +21,6 @@ python ping.py -d <your connection string>
 ## Extra parameters
 
 `-s` or `--seed`: Set a seed for random peer id generation
+
+## Notes
+- To show the client in action: ping interval = 1 second & response timeout = 5 seconds.
