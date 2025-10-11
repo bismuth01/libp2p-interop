@@ -17,5 +17,5 @@ find_package(ZLIB REQUIRED)
 
 find_package(libp2p CONFIG REQUIRED)
 
-add_executable(example ping.cpp)
-target_link_libraries(example PRIVATE p2p::libp2p)
+add_executable(ping ping.cpp)
+target_link_libraries(ping PRIVATE p2p::libp2p)
