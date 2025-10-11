@@ -105,7 +105,7 @@ async def run(port: int, destination: str, seed: int | None = None) -> None:
             # Get all available addresses with peer ID
             all_addrs = host.get_addrs()
 
-            print("Listener ready, listening on:\n")
+            print("Listener ready\nConnection strings: -")
             for addr in all_addrs:
                 print(f"{addr}")
 
@@ -114,10 +114,6 @@ async def run(port: int, destination: str, seed: int | None = None) -> None:
             optimal_quic_str = str(optimal_tcp).replace("/tcp/", "/udp/") + "/quic-v1"
             peer_id = host.get_id().to_string()
             optimal_quic_with_peer = f"{optimal_quic_str}/p2p/{peer_id}"
-            print(
-                f"\nRun this from the same folder in another console:\n\n"
-                f"python3 ping.py -d {optimal_quic_with_peer}\n"
-            )
             print("Waiting for incoming connection...")
 
         else:
