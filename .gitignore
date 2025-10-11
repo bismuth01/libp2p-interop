@@ -1,6 +1,10 @@
 # For leanp2p
 build/
 
-# For pylibp2p
+# For py-libp2p
 .venv
 __pycache__
+
+# For rust-libp2p
+target/
+Cargo.lock
