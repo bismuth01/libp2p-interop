@@ -17,11 +17,11 @@ This repository contains examples of interop for all libp2p implementations.
 |   FROM\TO  | leanp2p | py-libp2p | zig-libp2p | go-libp2p | js-libp2p | rust-libp2p |
 |:----------:|:-------:|:---------:|:----------:|:---------:|:---------:|:---------:|
 | leanp2p    |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
-| py-libp2p  |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ❌     |
+| py-libp2p  |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
 | zig-libp2p |    🛠️    |     🛠️     |      🛠️     |     🛠️     |     🚧     |     🛠️     |
 | go-libp2p  |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
 | js-libp2p  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
-| rust-libp2p  |    ✅    |     ❌     |      🚧     |     ✅     |     🚧     |     ✅     |
+| rust-libp2p  |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
 
 ## Setting up guides
 
