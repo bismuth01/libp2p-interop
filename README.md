@@ -40,3 +40,5 @@ The guides of setting up each implementation is given in its directory's `README
 - [go-libp2p](https://github.com/libp2p/go-libp2p)
 
 - [js-libp2p](https://github.com/libp2p/js-libp2p)
+
+- [nim-libp2p](https://github.com/vacp2p/nim-libp2p)
