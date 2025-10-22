@@ -8,3 +8,8 @@ __pycache__
 # For rust-libp2p
 target/
 Cargo.lock
+
+# For zig-libp2p
+flake.lock
+zig-cache
+zig-out
