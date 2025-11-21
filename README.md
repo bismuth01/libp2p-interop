@@ -23,11 +23,11 @@ Legend:
 
 ### Ping Protocol Interoperability
 
-|   FROM\TO  | leanp2p | py-libp2p | zig-libp2p | go-libp2p | js-libp2p | rust-libp2p |
+|   FROM\TO  | leanp2p | py-libp2p | eth-p2p-z-libp2p | go-libp2p | js-libp2p | rust-libp2p |
 |:----------:|:-------:|:---------:|:----------:|:---------:|:---------:|:------------:|
 | **leanp2p**    |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
 | **py-libp2p**  |    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
-| **zig-libp2p** |    🛠️    |     🛠️     |      🛠️     |     🛠️     |     🚧     |     🛠️     |
+| **eth-p2p-z-libp2p** |    🛠️    |     🛠️     |      🛠️     |     🛠️     |     🚧     |     🛠️     |
 | **go-libp2p**  |    ✅    |     ❌     |      🚧     |     ✅     |     🚧     |     ✅     |
 | **js-libp2p**  |    🚧    |     🚧     |      🚧     |     🚧     |     🚧     |     🚧     |
 | **rust-libp2p**|    ✅    |     ✅     |      🚧     |     ✅     |     🚧     |     ✅     |
