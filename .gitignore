@@ -9,7 +9,6 @@ __pycache__
 target/
 Cargo.lock
 
-# For zig-libp2p
-flake.lock
-zig-cache
+# For eth-p2p-z
+.zig-cache
 zig-out
