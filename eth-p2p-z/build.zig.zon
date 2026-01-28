@@ -37,8 +37,8 @@
     // internet connectivity.
     .dependencies = .{
         .libp2p = .{
-            .url = "git+https://github.com/zen-eth/zig-libp2p.git#fb1a6b7c1b7296391bbb2a06a894a8374303be8a",
-            .hash = "libp2p-0.1.0-Sj0LiNZwDADl3D5na_y0275lCLi1L7gkU9mU9M3WKJGQ",
+            .url = "git+https://github.com/bomanaps/eth-p2p-z.git#bc45ff74e39d2d031ef938f4df10b96f78a6ed2f",
+            .hash = "libp2p-0.1.0-Sj0LiNmSDAAIvnPXUV57XwjilMztOeNVTDBhIglQbSCx",
         },
         .zmultiformats = .{
             .url = "git+https://github.com/zen-eth/multiformats-zig#1359ac3ab12a6af173c2b7f13ae9c4f5ff34e11e",
