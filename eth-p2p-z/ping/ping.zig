@@ -231,6 +231,7 @@ fn runDialer(
             std.debug.print("Ping #{d} stream lost ({any}), reconnecting...\n", .{ count, err });
             stream.?.deinit();
             stream = null;
+            count += 1;
             std.time.sleep(ping_interval_ns);
             continue;
         };
