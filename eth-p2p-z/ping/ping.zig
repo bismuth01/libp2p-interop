@@ -101,7 +101,7 @@ const PingResultCtx = struct {
 
 fn findFreePort() !u16 {
     // Bind to port 0 to let the OS assign a free port
-    const address = try std.net.Address.parseIp("127.0.0.1", 0);
+    const address = try std.net.Address.parseIp("0.0.0.0", 0);
     const sock = try std.posix.socket(address.any.family, std.posix.SOCK.DGRAM, 0);
     defer std.posix.close(sock);
 
@@ -164,6 +164,28 @@ fn runListener(
     }
 }
 
+const OpenResult = struct {
+    stream: *ping.PingStream,
+    rtt_ns: ?u64,
+};
+
+fn openPingStream(
+    ping_service: *ping.PingService,
+    remote_addr: *Multiaddr,
+    ping_timeout_ns: u64,
+) !OpenResult {
+    var ctx = PingResultCtx{};
+    try ping_service.ping(remote_addr.*, .{ .timeout_ns = ping_timeout_ns }, &ctx, PingResultCtx.callback);
+    ctx.event.wait();
+    if (ctx.err) |err| {
+        // Clean up the stream if it was opened but the ping failed
+        if (ctx.sender) |s| s.deinit();
+        return err;
+    }
+    const stream = ctx.sender orelse return error.NoPingStream;
+    return .{ .stream = stream, .rtt_ns = ctx.result_ns };
+}
+
 fn runDialer(
     allocator: std.mem.Allocator,
     switcher: *swarm.Switch,
@@ -180,39 +202,64 @@ fn runDialer(
 
     var ping_service = ping.PingService.init(allocator, switcher);
 
-    while (true) {
-        var ping_ctx = PingResultCtx{};
+    var stream: ?*ping.PingStream = null;
 
-        ping_service.ping(remote_addr, .{ .timeout_ns = ping_timeout_ns }, &ping_ctx, PingResultCtx.callback) catch |err| {
-            std.debug.print("Ping #{d} failed to initiate: {any}\n", .{ count, err });
-            std.time.sleep(ping_interval_ns);
+    while (true) {
+        // Open a new stream if we don't have one
+        if (stream == null) {
+            const result = openPingStream(&ping_service, &remote_addr, ping_timeout_ns) catch |err| {
+                std.debug.print("Ping #{d} failed to open stream: {any}\n", .{ count, err });
+                std.time.sleep(ping_interval_ns);
+                count += 1;
+                continue;
+            };
+            stream = result.stream;
+            if (result.rtt_ns) |rtt_ns| {
+                const rtt_ms = @as(f64, @floatFromInt(rtt_ns)) / @as(f64, std.time.ns_per_ms);
+                std.debug.print("Ping #{d} RTT: {d:.2}ms\n", .{ count, rtt_ms });
+            } else {
+                std.debug.print("Ping #{d} stream opened, no RTT\n", .{count});
+            }
             count += 1;
+            std.time.sleep(ping_interval_ns);
+            continue;
+        }
+
+        // Reuse the existing stream for subsequent pings
+        var ping_ctx = PingResultCtx{};
+        ping_service.pingOnStream(stream.?, .{ .timeout_ns = ping_timeout_ns }, &ping_ctx, PingResultCtx.callback) catch |err| {
+            std.debug.print("Ping #{d} stream lost ({any}), reconnecting...\n", .{ count, err });
+            stream.?.deinit();
+            stream = null;
+            count += 1;
+            std.time.sleep(ping_interval_ns);
             continue;
         };
 
         ping_ctx.event.wait();
 
         if (ping_ctx.err) |err| {
-            std.debug.print("Ping #{d} failed: {any}\n", .{ count, err });
-            std.time.sleep(ping_interval_ns);
+            if (err == error.StreamClosed or err == error.MissingPingInitiator) {
+                std.debug.print("Ping #{d} stream closed ({any}), reconnecting...\n", .{ count, err });
+                stream.?.deinit();
+                stream = null;
+            } else {
+                std.debug.print("Ping #{d} failed: {any}\n", .{ count, err });
+            }
             count += 1;
+            std.time.sleep(ping_interval_ns);
             continue;
         }
 
         const rtt_ns = ping_ctx.result_ns orelse {
             std.debug.print("Ping #{d} failed: no result\n", .{count});
-            std.time.sleep(ping_interval_ns);
             count += 1;
+            std.time.sleep(ping_interval_ns);
             continue;
         };
 
         const rtt_ms = @as(f64, @floatFromInt(rtt_ns)) / @as(f64, std.time.ns_per_ms);
-        if (count == 0) {
-            std.debug.print("Ping successful! RTT: {d:.2}ms\n", .{rtt_ms});
-        } else {
-            std.debug.print("Ping #{d} successful! RTT: {d:.2}ms\n", .{ count, rtt_ms });
-        }
-
+        std.debug.print("Ping #{d} RTT: {d:.2}ms\n", .{ count, rtt_ms });
         count += 1;
         std.time.sleep(ping_interval_ns);
     }
